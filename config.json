@@ -18,7 +18,9 @@
         "notNull": "非NULL",
         "default": "預設值",
         "unique": "Unique",
-        "reference": "Reference"
+        "reference": "Reference",
+        "domainId": "DomainId",
+        "description": "Desc"
     },
 
     "reportStyle": {
@@ -26,10 +28,12 @@
         "fontName": "微軟正黑體",
         "englishFontName": "Arial",
         "columnWidth": {
-            "A": 22,
-            "B": 22,
-            "C": 22,
-            "D": 22
+            "A": 20,
+            "B": 20,
+            "C": 20,
+            "D": 12,
+            "E": 18,
+            "F": 20
         }
     },
 

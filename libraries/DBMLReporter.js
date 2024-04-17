@@ -90,6 +90,10 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
 
     const refDic = that.GetRefDic();
 
+    const FIELD_CHINESE_NAME_INDEX = 0;
+    const FIELD_DESC_INDEX = 1;
+    const FIELD_DOMAIN_ID = 2;
+
     const sheets = [];
     that.database.schemas.every(schema => {
         let tables = schema.tables;
@@ -127,9 +131,11 @@ DBMLReporter.prototype.GenerateReportSheetsData = function () {
                     tableName: table.name,
                     tableNote: table.note,
                     A: field.name,
-                    B: field.type.type_name,
-                    C: field.not_null ? 'TRUE' : 'FALSE',
-                    D: field.note,
+                    B: field.note.split(/\|/)[FIELD_CHINESE_NAME_INDEX],
+                    C: field.type.type_name,
+                    D: field.not_null ? 'TRUE' : 'FALSE',
+                    E: field.note.split(/\|/)?.[FIELD_DOMAIN_ID] ?? '',
+                    F: field.note.split(/\|/)[FIELD_DESC_INDEX],
                     // E: fieldSettings.join(', '),
                     // F: toFieldNames.join('\n')
                 });
@@ -196,21 +202,21 @@ DBMLReporter.prototype.ExportReport = function (xlsxPath, reportStyle) {
 
     const workbook = new ExcelJS.Workbook();
 
-    let index = 1;
     sheets.forEach(fields => {
-        let sheetName = (index++) + '.' + fields[0].tableNote;
-        if (sheetName.length > 25) {
-            sheetName = sheetName.substring(0, 25) + '...';
+        let sheetName = fields[0].tableNote;
+        if (sheetName.length > 27) {
+            sheetName = sheetName.substring(0, 27) + '...';
         }
         const worksheet = workbook.addWorksheet(sheetName);
 
         // Define headers
         worksheet.columns = [
             { key: 'A', width: reportStyle.columnWidth.A, header: 'Field Name' },
-            { key: 'B', width: reportStyle.columnWidth.B, header: 'Data Type' },
-            { key: 'C', width: reportStyle.columnWidth.C, header: 'Mandatory' },
-            { key: 'D', width: reportStyle.columnWidth.D, header: 'Description' },
-            // { key: 'E', width: 15, header: '設定' },
+            { key: 'B', width: reportStyle.columnWidth.B, header: 'Chinese Name' },
+            { key: 'C', width: reportStyle.columnWidth.C, header: 'Data Type' },
+            { key: 'D', width: reportStyle.columnWidth.D, header: 'Mandatory' },
+            { key: 'E', width: reportStyle.columnWidth.E, header: 'DomainId' },
+            { key: 'F', width: reportStyle.columnWidth.F, header: 'Description' },
             // { key: 'F', width: 50, header: '關聯' },
         ];
         worksheet.addRows(fields);

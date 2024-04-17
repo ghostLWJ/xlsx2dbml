@@ -57,6 +57,8 @@ SchemaParser.prototype.RawDataToTables = function (rawDataList) {
         const defaultValue = row[that.schemaTitles.default] ?? '';
         const isUnique = row[that.schemaTitles.unique] ?? '';
         const reference = row[that.schemaTitles.reference] ?? '';
+        const domainId = row[that.schemaTitles.domainId] ?? '';
+        const description = row[that.schemaTitles.description] ?? '';
 
         // 篩選資料表
         if (hasFilterTables && that.filterTables.indexOf(tableName) == -1) {
@@ -80,7 +82,9 @@ SchemaParser.prototype.RawDataToTables = function (rawDataList) {
                 isNN,
                 defaultValue,
                 isUnique,
-                reference
+                reference,
+                domainId,
+                description
             })
         }
     });
@@ -152,7 +156,7 @@ Note: '''
             if (column.isPK) settings.push('pk');
             if (column.isNN) settings.push('not null');
             if (column.defaultValue) settings.push(`default: '${column.defaultValue}'`);
-            if (column.note) settings.push(`note: '${column.note}'`);
+            if (column.note) settings.push(`note: '${[column.note, column.description, column.domainId].filter(x => x).join('|')}'`);
             if (column.reference) settings.push(`ref: > ${column.reference}`);
             let settingsStr = settings.length > 0 ? `[${settings.join(', ')}]` : '';
 
